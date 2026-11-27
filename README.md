@@ -4,7 +4,7 @@
 
 The service also accumulates historical market data in PostgreSQL and uses it to study merchant behavior and market conditions over time.
 
-The core backend implementation is kept in a private repository. This public repository focuses on the product idea, engineering decisions, product demos, anonymized historical analysis, QA evidence, and a small UI template/style sample.
+This repository contains the full source code of the service together with product demos, anonymized historical analysis, and QA documentation.
 
 > Experimental decision-support project. It does not execute trades or provide financial advice.
 
@@ -60,11 +60,74 @@ One major issue remains open: a rare historical collection cycle had a roughly 1
 
 See [`qa/README.md`](qa/README.md) for the testing approach, results, and current defect status.
 
+## Running locally
+
+Requirements: Python 3.10+, PostgreSQL (only for the historical collector), a [Twelve Data](https://twelvedata.com/) API key, and a Telegram bot.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Credentials are not stored in the repository. Each one is read from a plain-text file on the user's Desktop (`~/Desktop`):
+
+| File | Used by | Content |
+|---|---|---|
+| `twelve_data_api_key.txt` | `reference.py` | Twelve Data API key |
+| `telegram_bot_token.txt` | `telegram_bot.py` | Telegram bot token |
+| `telegram_chat_id.txt` | `telegram_bot.py` | Telegram chat ID for alerts |
+| `postgreSQL_password.txt` | `database.py` | password of the `postgres` user |
+
+**Live monitor + web interface**
+
+```bash
+python web_app.py
+```
+
+Then open <http://127.0.0.1:5000>, set the search conditions and press `START`.
+
+**Historical collector (PostgreSQL)**
+
+Create a database named `p2p_monitor` on `localhost:5432`, apply the schema, and start the collector:
+
+```bash
+psql -U postgres -d p2p_monitor -f schema.sql
+python v2_runner.py
+```
+
+Logs are written to `logs/`, and the USD/RUB reference cache to `data/`; both folders are git-ignored.
+
+## Code overview
+
+| File | Purpose |
+|---|---|
+| `web_app.py` | Flask web interface; starts and stops the live monitor |
+| `v1_runner.py` | live monitor: merchant-quality filters, edge calculation, Telegram alerts |
+| `v2_runner.py` | historical collector: saves full market snapshots every 60 seconds |
+| `bybit.py` | Bybit P2P API requests and order normalization |
+| `collector.py` | collection of a full market snapshot |
+| `reference.py` | USD/RUB reference rate from Twelve Data, with local cache |
+| `database.py` | PostgreSQL access layer |
+| `telegram_bot.py` | Telegram notifications |
+| `schema.sql` | database schema |
+| `templates/`, `static/` | web interface template and styles |
+
 ## Repository contents
 
 ```text
 .
 ├── README.md
+├── requirements.txt
+├── schema.sql
+├── web_app.py
+├── v1_runner.py
+├── v2_runner.py
+├── bybit.py
+├── collector.py
+├── database.py
+├── reference.py
+├── telegram_bot.py
 ├── demos/
 │   ├── web_monitor_demo.gif
 │   └── telegram_alert_demo.gif
@@ -85,4 +148,4 @@ See [`qa/README.md`](qa/README.md) for the testing approach, results, and curren
     └── style.css
 ```
 
-The `templates/` and `static/` folders are a small public UI sample. The backend collector, database access layer, API integration code, credentials/configuration, and the full historical dataset remain private.
+Credentials and the full historical dataset are not included; the `analysis/data/` folder contains anonymized exports only.

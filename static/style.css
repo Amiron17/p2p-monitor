@@ -138,6 +138,22 @@ select option {
     color: var(--background);
 }
 
+input:disabled,
+select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.search-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.search-button:disabled:hover {
+    background: transparent;
+    color: var(--text);
+}
+
 .notice {
     width: min(260px, 100%);
     margin: 18px auto 0;

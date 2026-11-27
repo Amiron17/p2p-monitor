@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+data/
+logs/
+*.log
+
+twelve_data_api_key.txt
+postgreSQL_password.txt
+telegram_bot_token.txt
+telegram_chat_id.txt
