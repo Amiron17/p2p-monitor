@@ -1,6 +1,6 @@
-# P2P NOOB
+# P2P MONITOR
 
-**P2P NOOB** is a prototype decision-support service for monitoring **Bybit P2P RUB → USDT** offers. It continuously searches for suitable orders, applies merchant-quality and implemented user search filters, compares prices with an external USD/RUB reference, and notifies the user when a configured target is reached.
+**P2P MONITOR** is a prototype decision-support service for monitoring **Bybit P2P RUB/USDT** offers. It continuously searches for suitable orders, applies merchant-quality and implemented user search filters, compares prices with an external USD/RUB reference, and notifies the user when a configured target is reached.
 
 The service also accumulates historical market data in PostgreSQL and uses it to study merchant behavior and market conditions over time.
 
